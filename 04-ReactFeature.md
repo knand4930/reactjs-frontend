@@ -1,254 +1,176 @@
 # React.js Features with Examples
 
 ## 1. Components
-React components help break the UI into reusable pieces.
+React applications are built using components. **Functional components** are preferred over class components.
 
-### Functional Component
+### Example:
 ```jsx
-const Greeting = ({ name }) => {
+function Greeting({ name }) {
   return <h1>Hello, {name}!</h1>;
-};
-```
-
-### Class Component (Older Approach)
-```jsx
-class Greeting extends React.Component {
-  render() {
-    return <h1>Hello, {this.props.name}!</h1>;
-  }
 }
 ```
 
 ---
 
 ## 2. Hooks
-Hooks allow functional components to use state and other React features.
-
-### useState (State Management)
+### - `useState` (Manage state)
 ```jsx
-import { useState } from "react";
-
-const Counter = () => {
-  const [count, setCount] = useState(0);
-
-  return (
-    <button onClick={() => setCount(count + 1)}>
-      Clicked {count} times
-    </button>
-  );
-};
+const [count, setCount] = useState(0);
+<button onClick={() => setCount(count + 1)}>Increment</button>
 ```
 
-### useEffect (Side Effects like API Calls)
+### - `useEffect` (Side effects like API calls)
 ```jsx
-import { useEffect, useState } from "react";
-import axios from "axios";
-
-const Users = () => {
-  const [users, setUsers] = useState([]);
-
-  useEffect(() => {
-    axios.get("https://jsonplaceholder.typicode.com/users")
-      .then(response => setUsers(response.data));
-  }, []);
-
-  return <ul>{users.map(user => <li key={user.id}>{user.name}</li>)}</ul>;
-};
+useEffect(() => {
+  console.log("Component mounted");
+}, []);
 ```
 
-### useContext (Global State)
+### - `useContext` (Global state management)
 ```jsx
-import { createContext, useContext } from "react";
+const theme = useContext(ThemeContext);
+```
 
-const ThemeContext = createContext("light");
+### - `useReducer` (Complex state logic)
+```jsx
+const [state, dispatch] = useReducer(reducer, initialState);
+```
 
-const ThemedComponent = () => {
-  const theme = useContext(ThemeContext);
-  return <p>Current theme: {theme}</p>;
-};
+### - `useRef` (DOM access)
+```jsx
+const inputRef = useRef(null);
+<input ref={inputRef} />
+```
+
+### - `useMemo` (Optimize performance)
+```jsx
+const expensiveCalculation = useMemo(() => compute(value), [value]);
+```
+
+### - `useCallback` (Memoize functions)
+```jsx
+const memoizedFunction = useCallback(() => doSomething(), []);
 ```
 
 ---
 
 ## 3. Props & State Management
-Props allow passing data between components.
+Props pass data between components.
 ```jsx
-const Welcome = ({ name }) => <h1>Welcome, {name}!</h1>;
-
-const App = () => <Welcome name="John" />;
+<Greeting name="John" />
+```
+State manages component data.
+```jsx
+const [isOpen, setIsOpen] = useState(false);
 ```
 
 ---
 
 ## 4. Event Handling
-Handling user events in React.
+Handles user interactions.
 ```jsx
-const Button = () => {
-  const handleClick = () => alert("Button Clicked!");
-  return <button onClick={handleClick}>Click Me</button>;
-};
+<button onClick={() => alert("Clicked!")}>Click Me</button>
 ```
 
 ---
 
 ## 5. Conditional Rendering
-Rendering components based on conditions.
 ```jsx
-const UserGreeting = ({ isLoggedIn }) => (
-  isLoggedIn ? <h1>Welcome Back!</h1> : <h1>Please Sign In</h1>
-);
+{isLoggedIn ? <Dashboard /> : <Login />}
 ```
 
 ---
 
 ## 6. Lists & Keys
-Rendering lists dynamically.
 ```jsx
-const NamesList = ({ names }) => (
-  <ul>
-    {names.map((name, index) => <li key={index}>{name}</li>)}
-  </ul>
-);
+{users.map(user => <User key={user.id} name={user.name} />)}
 ```
 
 ---
 
 ## 7. Routing (React Router)
-Using `react-router-dom` for navigation.
 ```jsx
-import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
-
-const Home = () => <h1>Home Page</h1>;
-const About = () => <h1>About Page</h1>;
-
-const App = () => (
-  <Router>
-    <nav>
-      <Link to="/">Home</Link>
-      <Link to="/about">About</Link>
-    </nav>
-    <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="/about" element={<About />} />
-    </Routes>
-  </Router>
-);
+<Route path="/about" element={<About />} />
+```
+Use `useNavigate` for navigation:
+```jsx
+const navigate = useNavigate();
+<button onClick={() => navigate("/home")}>Go Home</button>
 ```
 
 ---
 
 ## 8. API Calls (Axios or Fetch)
-Fetching data using Axios.
 ```jsx
-import { useEffect, useState } from "react";
-import axios from "axios";
-
-const FetchData = () => {
-  const [data, setData] = useState([]);
-
-  useEffect(() => {
-    axios.get("https://jsonplaceholder.typicode.com/posts")
-      .then(response => setData(response.data));
-  }, []);
-
-  return <ul>{data.map(post => <li key={post.id}>{post.title}</li>)}</ul>;
-};
+useEffect(() => {
+  axios.get("/api/data").then(response => setData(response.data));
+}, []);
 ```
 
 ---
 
 ## 9. Context API & State Management Libraries
-Global state management using Context API.
+Using Context API:
 ```jsx
-import { createContext, useContext, useState } from "react";
-
-const CounterContext = createContext();
-
-const CounterProvider = ({ children }) => {
-  const [count, setCount] = useState(0);
-  return (
-    <CounterContext.Provider value={{ count, setCount }}>
-      {children}
-    </CounterContext.Provider>
-  );
-};
-
-const CounterDisplay = () => {
-  const { count } = useContext(CounterContext);
-  return <h1>Count: {count}</h1>;
-};
-
-const CounterButton = () => {
-  const { setCount } = useContext(CounterContext);
-  return <button onClick={() => setCount(prev => prev + 1)}>Increase</button>;
-};
-
-const App = () => (
-  <CounterProvider>
-    <CounterDisplay />
-    <CounterButton />
-  </CounterProvider>
-);
+const ThemeContext = createContext();
 ```
+For large-scale apps, use **Redux**, **Zustand**, or **Recoil**.
 
 ---
 
 ## 10. Lazy Loading & Code Splitting
-Using `React.lazy()` and `Suspense`.
+Load components lazily.
 ```jsx
-import { lazy, Suspense } from "react";
-
-const LazyComponent = lazy(() => import("./LazyComponent"));
-
-const App = () => (
-  <Suspense fallback={<h1>Loading...</h1>}>
-    <LazyComponent />
-  </Suspense>
-);
+const LazyComponent = React.lazy(() => import("./LazyComponent"));
 ```
 
 ---
 
-## 11. CSS & Styling
-### Inline Styles
+## 11. Error Boundaries
+Catch UI errors in class components.
 ```jsx
-const style = { color: "blue", fontSize: "20px" };
-
-const StyledText = () => <p style={style}>Styled Text</p>;
-```
-
-### CSS Modules
-```jsx
-import styles from "./styles.module.css";
-
-const StyledComponent = () => <p className={styles.text}>Styled Text</p>;
+class ErrorBoundary extends React.Component {
+  componentDidCatch(error, info) {
+    console.log(error, info);
+  }
+}
 ```
 
 ---
 
-## 12. Form Handling & Validation
-Handling forms in React.
+## 12. React Portals
+Render elements outside the parent hierarchy.
 ```jsx
-import { useState } from "react";
-
-const FormExample = () => {
-  const [name, setName] = useState("");
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    alert(`Submitted: ${name}`);
-  };
-
-  return (
-    <form onSubmit={handleSubmit}>
-      <input type="text" value={name} onChange={(e) => setName(e.target.value)} />
-      <button type="submit">Submit</button>
-    </form>
-  );
-};
+ReactDOM.createPortal(<Modal />, document.getElementById("modal-root"));
 ```
 
 ---
 
-## 🚀 Need help implementing any of these in your project? 😊
+## 13. CSS & Styling
+```jsx
+import "./styles.css";  // CSS file
+const styles = { color: "red" };  // Inline styles
+```
+Libraries like **Tailwind CSS** or **Bootstrap** can be used.
+
+---
+
+## 14. Form Handling & Validation
+```jsx
+const [input, setInput] = useState("");
+<input value={input} onChange={e => setInput(e.target.value)} />
+```
+For validation, use **Formik** or **React Hook Form**.
+
+---
+
+## 15. Server-Side Rendering (SSR) & Static Generation (SSG)
+Use **Next.js** for SEO-friendly rendering.
+```jsx
+export async function getServerSideProps() {
+  return { props: { data: await fetchData() } };
+}
+```
+
+These features make React powerful and efficient for building modern web applications! 🚀
 
